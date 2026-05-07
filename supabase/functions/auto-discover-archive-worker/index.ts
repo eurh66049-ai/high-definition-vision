@@ -101,14 +101,15 @@ serve(async (req) => {
     }
 
     // 3) جلب دفعة جديدة من Archive.org
-    let archiveQuery = config.search_query?.trim() || "language:Arabic AND mediatype:texts AND format:PDF";
+    let archiveQuery = config.search_query?.trim() || "language:arabic AND mediatype:texts";
 
-    // محاولة تحسين الاستعلام عبر Mistral عند أول تشغيل فقط (عندما لا يحتوي الاستعلام على mediatype/format)
-    if (!/mediatype/i.test(archiveQuery) && !/format/i.test(archiveQuery)) {
+    // محاولة تحسين الاستعلام عبر Mistral عند أول تشغيل فقط (عندما لا يحتوي الاستعلام على mediatype)
+    if (!/mediatype/i.test(archiveQuery)) {
       archiveQuery = await refineQueryWithMistral(archiveQuery);
     }
-    if (!/mediatype/i.test(archiveQuery)) archiveQuery += " AND mediatype:(texts)";
-    if (!/format/i.test(archiveQuery)) archiveQuery += " AND format:(PDF)";
+    if (!/mediatype/i.test(archiveQuery)) archiveQuery += " AND mediatype:texts";
+    // ملاحظة: لا نضيف قيد format لأن archive.org يستخدم قيمًا مثل "Text PDF" و"Image Container PDF"؛
+    // سنفلتر ملفات PDF لاحقًا من metadata API في resolveBook().
 
     const batchSize = Math.min(config.batch_size || 100, 200);
     const scrapeUrl = new URL("https://archive.org/services/search/v1/scrape");
