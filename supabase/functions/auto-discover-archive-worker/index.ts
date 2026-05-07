@@ -245,7 +245,7 @@ serve(async (req) => {
       cursor: nextCursor,
       total_discovered: (config.total_discovered || 0) + inserted,
       last_run_at: new Date().toISOString(),
-      last_status: `أُضيف ${inserted} كتاب من ${items.length} نتيجة (تم حلّ ${candidates.length} رابط PDF صحيح، المعلّق: ${pending})`,
+      last_status: `أُضيف ${inserted} كتاب من ${items.length} نتيجة (تم تجاهل ${skippedNoTitle} بدون اسم حقيقي، حُلّ ${candidates.length} رابط، المعلّق: ${pending})`,
       last_error: null,
     }).eq("id", 1);
 
@@ -253,7 +253,8 @@ serve(async (req) => {
       success: true,
       fetched: items.length,
       inserted,
-      duplicates: items.length - fresh.length,
+      skipped_no_title: skippedNoTitle,
+      duplicates: items.length - fresh.length - skippedNoTitle,
       pending_before: pending,
       next_cursor: nextCursor,
     }), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
