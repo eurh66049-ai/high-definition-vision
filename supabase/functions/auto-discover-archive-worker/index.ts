@@ -142,48 +142,70 @@ serve(async (req) => {
       });
     }
 
-    // 4) جلب اسم ملف PDF الحقيقي من metadata API لكل عنصر (بالتوازي مع حدّ للتزامن)
-    //    سبب: اسم الـ PDF لا يطابق دائماً المُعرّف، فالتخمين كان يُنتج روابط 404.
-    async function resolvePdf(identifier: string): Promise<string | null> {
+    // 4) جلب البيانات الكاملة (اسم الكتاب الحقيقي + رابط PDF) من metadata API
+    //    شرط القبول: يجب أن يحتوي archive.org على عنوان حقيقي للكتاب — وإلا نتجاهله.
+    //    Mistral يُستخدم فقط لتحسين استعلام البحث، لا لاختراع عناوين.
+    function isRealTitle(t: string | null | undefined, identifier: string): boolean {
+      if (!t) return false;
+      const s = t.toString().trim();
+      if (s.length < 3) return false;
+      // تجاهل إذا كان العنوان مطابقًا للمُعرّف (يعني لا يوجد عنوان حقيقي)
+      if (s.toLowerCase() === identifier.toLowerCase()) return false;
+      // تجاهل العناوين التي تبدو كمعرّفات تقنية (أرقام/شرطات سفلية فقط أو بدون أحرف)
+      if (/^[\w\-_.]+$/.test(s) && !/[\u0600-\u06FFa-zA-Z]{3,}/.test(s)) return false;
+      // تجاهل عناوين عامة مثل "untitled" / "scan" / "بدون عنوان"
+      if (/^(untitled|unknown|no\s*title|scan\d*|بدون\s*عنوان|غير\s*معروف)$/i.test(s)) return false;
+      return true;
+    }
+
+    async function resolveBook(identifier: string, fallbackTitle: string): Promise<{ title: string; url: string } | null> {
       try {
         const r = await fetch(`https://archive.org/metadata/${encodeURIComponent(identifier)}`, {
           headers: { "User-Agent": "KotobiAutoDiscovery/1.0" },
         });
         if (!r.ok) return null;
         const meta = await r.json();
+
+        // العنوان الحقيقي من metadata
+        const metaTitleRaw = meta?.metadata?.title;
+        const metaTitle = Array.isArray(metaTitleRaw) ? metaTitleRaw[0] : metaTitleRaw;
+        const candidateTitles = [metaTitle, fallbackTitle].filter(Boolean) as string[];
+        const realTitle = candidateTitles.find((t) => isRealTitle(t, identifier));
+        if (!realTitle) return null; // لا يوجد اسم كتاب حقيقي → تجاهل
+
+        // ملف PDF
         const files: any[] = Array.isArray(meta?.files) ? meta.files : [];
         const pdfs = files
           .filter((f) => typeof f.name === "string" && /\.pdf$/i.test(f.name))
           .map((f) => ({ name: f.name as string, size: f.size ? parseInt(f.size, 10) : 0 }));
         if (pdfs.length === 0) return null;
-        // فضّل النسخة الأكبر غير المضغوطة (_bw / _text)
         const preferred = pdfs
           .filter((f) => !/_bw\.pdf$|_text\.pdf$/i.test(f.name))
           .sort((a, b) => b.size - a.size);
         const chosen = (preferred[0] || pdfs[0]).name;
-        return `https://archive.org/download/${encodeURIComponent(identifier)}/${encodeURI(chosen)}`;
+        return {
+          title: realTitle.toString().trim().slice(0, 500),
+          url: `https://archive.org/download/${encodeURIComponent(identifier)}/${encodeURI(chosen)}`,
+        };
       } catch {
         return null;
       }
     }
 
-    // تنفيذ بتزامن محدود لتجنّب إرهاق archive.org والـ timeout
     const CONCURRENCY = 8;
     const candidates: Array<{ title: string; book_file_url: string; identifier: string }> = [];
+    let skippedNoTitle = 0;
     let idx = 0;
     async function worker() {
       while (idx < items.length) {
         const i = idx++;
         const it = items[i];
-        const title = Array.isArray(it.title) ? it.title[0] : (it.title || it.identifier);
-        const cleanTitle = (title || it.identifier).toString().trim();
-        const url = await resolvePdf(it.identifier);
-        if (url) {
-          candidates.push({
-            title: cleanTitle.slice(0, 500),
-            book_file_url: url,
-            identifier: it.identifier,
-          });
+        const fallback = (Array.isArray(it.title) ? it.title[0] : it.title) || "";
+        const book = await resolveBook(it.identifier, fallback);
+        if (book) {
+          candidates.push({ title: book.title, book_file_url: book.url, identifier: it.identifier });
+        } else {
+          skippedNoTitle++;
         }
       }
     }
