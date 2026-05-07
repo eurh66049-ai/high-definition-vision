@@ -880,7 +880,7 @@ async function upsertApprovedBook(book: InputBook, meta: AIBookMeta, supabaseCli
         .ilike("source_book_file_url", `%${sourceIdentifier}%`)
         .limit(1);
       if (Array.isArray(bySource) && bySource.length > 0) {
-        return { success: false, title, error: "كتاب مكرر (نفس مصدر archive.org)" };
+        return { success: false, duplicate: true, title, error: "كتاب مكرر (نفس مصدر archive.org)" };
       }
     }
     // 2) فحص التكرار حسب العنوان المطابق
@@ -893,7 +893,7 @@ async function upsertApprovedBook(book: InputBook, meta: AIBookMeta, supabaseCli
       if (Array.isArray(byTitle)) {
         for (const row of byTitle) {
           if (normalizeDuplicateTitle(String(row.title || "")) === normalizedTitle) {
-            return { success: false, title, error: "كتاب مكرر (نفس العنوان)" };
+            return { success: false, duplicate: true, title, error: "كتاب مكرر (نفس العنوان)" };
           }
         }
       }

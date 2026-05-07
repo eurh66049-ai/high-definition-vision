@@ -183,10 +183,13 @@ serve(async (req) => {
         const preferred = pdfs
           .filter((f) => !/_bw\.pdf$|_text\.pdf$/i.test(f.name))
           .sort((a, b) => b.size - a.size);
-        const chosen = (preferred[0] || pdfs[0]).name;
+        const chosen = preferred[0] || pdfs[0];
+        // تخطّي الملفات الكبيرة جدًا التي تتجاوز حد Supabase Storage (50MB افتراضيًا)
+        const MAX_BYTES = 45 * 1024 * 1024;
+        if (chosen.size && chosen.size > MAX_BYTES) return null;
         return {
           title: realTitle.toString().trim().slice(0, 500),
-          url: `https://archive.org/download/${encodeURIComponent(identifier)}/${encodeURI(chosen)}`,
+          url: `https://archive.org/download/${encodeURIComponent(identifier)}/${encodeURI(chosen.name)}`,
         };
       } catch {
         return null;
@@ -212,14 +215,41 @@ serve(async (req) => {
     }
     await Promise.all(Array.from({ length: CONCURRENCY }, () => worker()));
 
-    // 5) فلترة المكررات (موجودة مسبقاً في الطابور)
+    // 5) فلترة المكررات (موجودة مسبقاً في الطابور أو منشورة بالفعل في book_submissions)
     const urls = candidates.map((c) => c.book_file_url);
     const { data: existing } = await supabase
       .from("bulk_upload_queue")
       .select("book_file_url")
       .in("book_file_url", urls);
     const existingSet = new Set((existing || []).map((r: any) => r.book_file_url));
-    const fresh = candidates.filter((c) => !existingSet.has(c.book_file_url));
+
+    // فحص الكتب المنشورة سابقًا حسب معرّف archive.org (السبب الأول لفشل ~80% من الكتب)
+    const identifiers = candidates.map((c) => c.identifier);
+    const publishedSet = new Set<string>();
+    if (identifiers.length > 0) {
+      // نفحص بدفعات صغيرة عبر OR ilike
+      const orFilter = identifiers
+        .map((id) => `source_book_file_url.ilike.%${id.replace(/[%,()]/g, "")}%`)
+        .join(",");
+      try {
+        const { data: published } = await supabase
+          .from("book_submissions")
+          .select("source_book_file_url")
+          .or(orFilter);
+        for (const row of published || []) {
+          const url = String((row as any).source_book_file_url || "");
+          for (const id of identifiers) {
+            if (url.includes(id)) publishedSet.add(id);
+          }
+        }
+      } catch (e) {
+        console.warn("[auto-discover] published-check failed:", (e as Error)?.message);
+      }
+    }
+
+    const fresh = candidates.filter(
+      (c) => !existingSet.has(c.book_file_url) && !publishedSet.has(c.identifier),
+    );
 
     let inserted = 0;
     if (fresh.length > 0) {
