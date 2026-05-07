@@ -183,10 +183,13 @@ serve(async (req) => {
         const preferred = pdfs
           .filter((f) => !/_bw\.pdf$|_text\.pdf$/i.test(f.name))
           .sort((a, b) => b.size - a.size);
-        const chosen = (preferred[0] || pdfs[0]).name;
+        const chosen = preferred[0] || pdfs[0];
+        // تخطّي الملفات الكبيرة جدًا التي تتجاوز حد Supabase Storage (50MB افتراضيًا)
+        const MAX_BYTES = 45 * 1024 * 1024;
+        if (chosen.size && chosen.size > MAX_BYTES) return null;
         return {
           title: realTitle.toString().trim().slice(0, 500),
-          url: `https://archive.org/download/${encodeURIComponent(identifier)}/${encodeURI(chosen)}`,
+          url: `https://archive.org/download/${encodeURIComponent(identifier)}/${encodeURI(chosen.name)}`,
         };
       } catch {
         return null;
