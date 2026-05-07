@@ -294,12 +294,13 @@ serve(async (req) => {
 
     return new Response(JSON.stringify({
       success: true,
-      fetched: items.length,
+      scanned: totalScanned,
       inserted,
-      skipped_no_title: skippedNoTitle,
-      duplicates: items.length - fresh.length - skippedNoTitle,
+      already_known: totalAlreadyKnown,
+      skipped_no_title: totalSkippedNoTitle,
       pending_before: pending,
       next_cursor: nextCursor,
+      exhausted,
     }), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
 
   } catch (err) {
