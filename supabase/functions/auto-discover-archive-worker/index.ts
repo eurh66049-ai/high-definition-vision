@@ -100,61 +100,23 @@ serve(async (req) => {
       });
     }
 
-    // 3) جلب دفعة جديدة من Archive.org
+    // 3) تحضير استعلام Archive.org
     let archiveQuery = config.search_query?.trim() || "language:arabic AND mediatype:texts";
-
-    // محاولة تحسين الاستعلام عبر Mistral عند أول تشغيل فقط (عندما لا يحتوي الاستعلام على mediatype)
     if (!/mediatype/i.test(archiveQuery)) {
       archiveQuery = await refineQueryWithMistral(archiveQuery);
     }
     if (!/mediatype/i.test(archiveQuery)) archiveQuery += " AND mediatype:texts";
-    // ملاحظة: لا نضيف قيد format لأن archive.org يستخدم قيمًا مثل "Text PDF" و"Image Container PDF"؛
-    // سنفلتر ملفات PDF لاحقًا من metadata API في resolveBook().
 
     const batchSize = Math.min(config.batch_size || 100, 200);
-    const scrapeUrl = new URL("https://archive.org/services/search/v1/scrape");
-    scrapeUrl.searchParams.set("q", archiveQuery);
-    scrapeUrl.searchParams.set("fields", "identifier,title");
-    scrapeUrl.searchParams.set("count", String(batchSize));
-    if (config.cursor) scrapeUrl.searchParams.set("cursor", config.cursor);
+    // الهدف: عدد الكتب الجديدة التي نريد إضافتها هذا التشغيل
+    const targetFresh = Math.max(threshold - pending, batchSize);
 
-    const archRes = await fetch(scrapeUrl.toString(), {
-      headers: { "User-Agent": "KotobiAutoDiscovery/1.0" },
-    });
-    if (!archRes.ok) {
-      const txt = await archRes.text();
-      throw new Error(`archive.org HTTP ${archRes.status}: ${txt.slice(0, 200)}`);
-    }
-    const archData = await archRes.json();
-    const items: Array<{ identifier: string; title: string | string[] }> =
-      Array.isArray(archData?.items) ? archData.items : [];
-    const nextCursor: string | null = archData?.cursor || null;
-
-    if (items.length === 0) {
-      // وصلنا للنهاية - أعد التصفّح من البداية
-      await supabase.from("auto_discover_config").update({
-        cursor: null,
-        last_run_at: new Date().toISOString(),
-        last_status: "اكتملت دورة البحث، إعادة التصفّح من البداية",
-        last_error: null,
-      }).eq("id", 1);
-      return new Response(JSON.stringify({ success: true, fetched: 0, message: "cursor reset" }), {
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
-    }
-
-    // 4) جلب البيانات الكاملة (اسم الكتاب الحقيقي + رابط PDF) من metadata API
-    //    شرط القبول: يجب أن يحتوي archive.org على عنوان حقيقي للكتاب — وإلا نتجاهله.
-    //    Mistral يُستخدم فقط لتحسين استعلام البحث، لا لاختراع عناوين.
     function isRealTitle(t: string | null | undefined, identifier: string): boolean {
       if (!t) return false;
       const s = t.toString().trim();
       if (s.length < 3) return false;
-      // تجاهل إذا كان العنوان مطابقًا للمُعرّف (يعني لا يوجد عنوان حقيقي)
       if (s.toLowerCase() === identifier.toLowerCase()) return false;
-      // تجاهل العناوين التي تبدو كمعرّفات تقنية (أرقام/شرطات سفلية فقط أو بدون أحرف)
       if (/^[\w\-_.]+$/.test(s) && !/[\u0600-\u06FFa-zA-Z]{3,}/.test(s)) return false;
-      // تجاهل عناوين عامة مثل "untitled" / "scan" / "بدون عنوان"
       if (/^(untitled|unknown|no\s*title|scan\d*|بدون\s*عنوان|غير\s*معروف)$/i.test(s)) return false;
       return true;
     }
@@ -166,15 +128,12 @@ serve(async (req) => {
         });
         if (!r.ok) return null;
         const meta = await r.json();
-
-        // العنوان الحقيقي من metadata
         const metaTitleRaw = meta?.metadata?.title;
         const metaTitle = Array.isArray(metaTitleRaw) ? metaTitleRaw[0] : metaTitleRaw;
         const candidateTitles = [metaTitle, fallbackTitle].filter(Boolean) as string[];
         const realTitle = candidateTitles.find((t) => isRealTitle(t, identifier));
-        if (!realTitle) return null; // لا يوجد اسم كتاب حقيقي → تجاهل
+        if (!realTitle) return null;
 
-        // ملف PDF
         const files: any[] = Array.isArray(meta?.files) ? meta.files : [];
         const pdfs = files
           .filter((f) => typeof f.name === "string" && /\.pdf$/i.test(f.name))
@@ -184,7 +143,6 @@ serve(async (req) => {
           .filter((f) => !/_bw\.pdf$|_text\.pdf$/i.test(f.name))
           .sort((a, b) => b.size - a.size);
         const chosen = preferred[0] || pdfs[0];
-        // تخطّي الملفات الكبيرة جدًا التي تتجاوز حد Supabase Storage (50MB افتراضيًا)
         const MAX_BYTES = 45 * 1024 * 1024;
         if (chosen.size && chosen.size > MAX_BYTES) return null;
         return {
@@ -196,98 +154,153 @@ serve(async (req) => {
       }
     }
 
-    const CONCURRENCY = 8;
-    const candidates: Array<{ title: string; book_file_url: string; identifier: string }> = [];
-    let skippedNoTitle = 0;
-    let idx = 0;
-    async function worker() {
-      while (idx < items.length) {
-        const i = idx++;
-        const it = items[i];
-        const fallback = (Array.isArray(it.title) ? it.title[0] : it.title) || "";
-        const book = await resolveBook(it.identifier, fallback);
-        if (book) {
-          candidates.push({ title: book.title, book_file_url: book.url, identifier: it.identifier });
-        } else {
-          skippedNoTitle++;
-        }
-      }
-    }
-    await Promise.all(Array.from({ length: CONCURRENCY }, () => worker()));
-
-    // 5) فلترة المكررات (موجودة مسبقاً في الطابور أو منشورة بالفعل في book_submissions)
-    const urls = candidates.map((c) => c.book_file_url);
-    const { data: existing } = await supabase
-      .from("bulk_upload_queue")
-      .select("book_file_url")
-      .in("book_file_url", urls);
-    const existingSet = new Set((existing || []).map((r: any) => r.book_file_url));
-
-    // فحص الكتب المنشورة سابقًا حسب معرّف archive.org (السبب الأول لفشل ~80% من الكتب)
-    const identifiers = candidates.map((c) => c.identifier);
-    const publishedSet = new Set<string>();
-    if (identifiers.length > 0) {
-      // نفحص بدفعات صغيرة عبر OR ilike
-      const orFilter = identifiers
-        .map((id) => `source_book_file_url.ilike.%${id.replace(/[%,()]/g, "")}%`)
-        .join(",");
+    // فلترة المعرّفات مقابل قاعدة البيانات (queue + submissions) قبل أي metadata fetch
+    async function filterAlreadyKnown(ids: string[]): Promise<Set<string>> {
+      const known = new Set<string>();
+      if (ids.length === 0) return known;
+      // 1) في bulk_upload_queue (حسب نمط الرابط)
+      const orQueue = ids.map((id) => `book_file_url.ilike.%/download/${id.replace(/[%,()]/g, "")}/%`).join(",");
       try {
-        const { data: published } = await supabase
-          .from("book_submissions")
-          .select("source_book_file_url")
-          .or(orFilter);
-        for (const row of published || []) {
-          const url = String((row as any).source_book_file_url || "");
-          for (const id of identifiers) {
-            if (url.includes(id)) publishedSet.add(id);
+        const { data: q } = await supabase.from("bulk_upload_queue").select("book_file_url").or(orQueue);
+        for (const row of q || []) {
+          const u = String((row as any).book_file_url || "");
+          for (const id of ids) if (u.includes(`/download/${id}/`)) known.add(id);
+        }
+      } catch (_) {}
+      // 2) في book_submissions (المنشورة سابقًا)
+      const remaining = ids.filter((id) => !known.has(id));
+      if (remaining.length > 0) {
+        const orSub = remaining.map((id) => `source_book_file_url.ilike.%${id.replace(/[%,()]/g, "")}%`).join(",");
+        try {
+          const { data: s } = await supabase.from("book_submissions").select("source_book_file_url").or(orSub);
+          for (const row of s || []) {
+            const u = String((row as any).source_book_file_url || "");
+            for (const id of remaining) if (u.includes(id)) known.add(id);
+          }
+        } catch (_) {}
+      }
+      return known;
+    }
+
+    // 4) حلقة بحث متعددة الصفحات: نستمر بالتقدم في cursor حتى نجمع عددًا كافيًا من الكتب الجديدة
+    const STARTED_AT = Date.now();
+    const MAX_MS = 90_000;
+    const MAX_PAGES = 15;
+    let cursor: string | null = config.cursor;
+    let totalScanned = 0;
+    let totalAlreadyKnown = 0;
+    let totalSkippedNoTitle = 0;
+    let exhausted = false;
+
+    const fresh: Array<{ title: string; book_file_url: string; identifier: string }> = [];
+    const insertedUrls = new Set<string>();
+
+    for (let page = 0; page < MAX_PAGES; page++) {
+      if (fresh.length >= targetFresh) break;
+      if (Date.now() - STARTED_AT > MAX_MS) break;
+
+      const scrapeUrl = new URL("https://archive.org/services/search/v1/scrape");
+      scrapeUrl.searchParams.set("q", archiveQuery);
+      scrapeUrl.searchParams.set("fields", "identifier,title");
+      scrapeUrl.searchParams.set("count", String(batchSize));
+      if (cursor) scrapeUrl.searchParams.set("cursor", cursor);
+
+      const archRes = await fetch(scrapeUrl.toString(), {
+        headers: { "User-Agent": "KotobiAutoDiscovery/1.0" },
+      });
+      if (!archRes.ok) {
+        const txt = await archRes.text();
+        throw new Error(`archive.org HTTP ${archRes.status}: ${txt.slice(0, 200)}`);
+      }
+      const archData = await archRes.json();
+      const items: Array<{ identifier: string; title: string | string[] }> =
+        Array.isArray(archData?.items) ? archData.items : [];
+      cursor = archData?.cursor || null;
+      totalScanned += items.length;
+
+      if (items.length === 0) { exhausted = true; break; }
+
+      // فلترة المعرّفات المعروفة مسبقًا (مكررة)
+      const ids = items.map((it) => it.identifier);
+      const known = await filterAlreadyKnown(ids);
+      totalAlreadyKnown += known.size;
+      const unknownItems = items.filter((it) => !known.has(it.identifier));
+      if (unknownItems.length === 0) {
+        // كل هذه الصفحة مكررة → تابع للصفحة التالية
+        if (!cursor) { exhausted = true; break; }
+        continue;
+      }
+
+      // resolveBook بالتوازي للمعرّفات الجديدة فقط
+      const CONCURRENCY = 8;
+      let idx = 0;
+      const pageFresh: Array<{ title: string; book_file_url: string; identifier: string }> = [];
+      async function worker() {
+        while (idx < unknownItems.length) {
+          if (fresh.length + pageFresh.length >= targetFresh) return;
+          const i = idx++;
+          const it = unknownItems[i];
+          const fallback = (Array.isArray(it.title) ? it.title[0] : it.title) || "";
+          const book = await resolveBook(it.identifier, fallback);
+          if (book) {
+            if (!insertedUrls.has(book.url)) {
+              insertedUrls.add(book.url);
+              pageFresh.push({ title: book.title, book_file_url: book.url, identifier: it.identifier });
+            }
+          } else {
+            totalSkippedNoTitle++;
           }
         }
-      } catch (e) {
-        console.warn("[auto-discover] published-check failed:", (e as Error)?.message);
       }
+      await Promise.all(Array.from({ length: CONCURRENCY }, () => worker()));
+
+      // أدرج كتب هذه الصفحة فورًا حتى لا نخسرها عند timeout
+      if (pageFresh.length > 0) {
+        const batchLabel = `auto-${new Date().toISOString().slice(0, 19)}`;
+        const rows = pageFresh.map((b) => ({
+          title: b.title,
+          book_file_url: b.book_file_url,
+          cover_image_url: null,
+          status: "pending",
+          attempts: 0,
+          max_attempts: 3,
+          created_by_email: "auto-discover@kotobi.local",
+          batch_label: batchLabel,
+        }));
+        const { error: insErr } = await supabase
+          .from("bulk_upload_queue")
+          .insert(rows);
+        if (!insErr) {
+          fresh.push(...pageFresh);
+        } else {
+          console.warn("[auto-discover] insert error:", insErr.message);
+        }
+      }
+
+      if (!cursor) { exhausted = true; break; }
     }
 
-    const fresh = candidates.filter(
-      (c) => !existingSet.has(c.book_file_url) && !publishedSet.has(c.identifier),
-    );
-
-    let inserted = 0;
-    if (fresh.length > 0) {
-      const batchLabel = `auto-${new Date().toISOString().slice(0, 19)}`;
-      const rows = fresh.map((b) => ({
-        title: b.title,
-        book_file_url: b.book_file_url,
-        cover_image_url: null,
-        status: "pending",
-        attempts: 0,
-        max_attempts: 3,
-        created_by_email: "auto-discover@kotobi.local",
-        batch_label: batchLabel,
-      }));
-      const { error: insErr, count } = await supabase
-        .from("bulk_upload_queue")
-        .insert(rows, { count: "exact" });
-      if (insErr) throw new Error(`insert: ${insErr.message}`);
-      inserted = count || rows.length;
-    }
+    const inserted = fresh.length;
+    const nextCursor = exhausted ? null : cursor;
 
     // 6) تحديث المؤشر والإحصاءات
     await supabase.from("auto_discover_config").update({
       cursor: nextCursor,
       total_discovered: (config.total_discovered || 0) + inserted,
       last_run_at: new Date().toISOString(),
-      last_status: `أُضيف ${inserted} كتاب من ${items.length} نتيجة (تم تجاهل ${skippedNoTitle} بدون اسم حقيقي، حُلّ ${candidates.length} رابط، المعلّق: ${pending})`,
+      last_status: `أُضيف ${inserted} كتاب جديد (تم تخطي ${totalAlreadyKnown} مكرر و ${totalSkippedNoTitle} بدون اسم/PDF صالح من ${totalScanned} نتيجة، المعلّق: ${pending})${exhausted ? " — اكتملت دورة البحث" : ""}`,
       last_error: null,
     }).eq("id", 1);
 
     return new Response(JSON.stringify({
       success: true,
-      fetched: items.length,
+      scanned: totalScanned,
       inserted,
-      skipped_no_title: skippedNoTitle,
-      duplicates: items.length - fresh.length - skippedNoTitle,
+      already_known: totalAlreadyKnown,
+      skipped_no_title: totalSkippedNoTitle,
       pending_before: pending,
       next_cursor: nextCursor,
+      exhausted,
     }), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
 
   } catch (err) {
