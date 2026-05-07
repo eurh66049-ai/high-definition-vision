@@ -1,0 +1,113 @@
+[build]
+  publish = "dist"
+  command = "npm run build"
+  base = "."
+
+[build.environment]
+  NODE_VERSION = "20"
+  NPM_FLAGS = "--legacy-peer-deps"
+
+[[edge_functions]]
+  function = "dynamic-sitemap"
+  path = "/sitemap.xml"
+
+[[edge_functions]]
+  function = "dynamic-sitemap"
+  path = "/dynamic-sitemap.xml"
+
+[[edge_functions]]
+  function = "book-share-meta"
+  path = "/book/*"
+
+[[edge_functions]]
+  function = "author-share-meta"
+  path = "/author/*"
+
+[[edge_functions]]
+  function = "image-proxy"
+  path = "/i/*"
+
+[[edge_functions]]
+  function = "file-proxy"
+  path = "/f/*"
+
+# Redirect old domain
+[[redirects]]
+  from = "https://kotobi.netlify.app/*"
+  to = "https://kotobi.xyz/:splat"
+  status = 301
+  force = true
+
+# SPA fallback
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+# Immutable hashed assets - 1 year cache
+[[headers]]
+  for = "/assets/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+# CDN: Proxied images - 1 year immutable cache
+[[headers]]
+  for = "/i/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+    CDN-Cache-Control = "public, max-age=31536000, immutable"
+
+# CDN: Proxied files (PDFs) - 1 year immutable cache
+[[headers]]
+  for = "/f/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+    CDN-Cache-Control = "public, max-age=31536000, immutable"
+
+# Images
+[[headers]]
+  for = "*.png"
+  [headers.values]
+    Cache-Control = "public, max-age=2592000"
+
+[[headers]]
+  for = "*.jpg"
+  [headers.values]
+    Cache-Control = "public, max-age=2592000"
+
+[[headers]]
+  for = "*.webp"
+  [headers.values]
+    Cache-Control = "public, max-age=2592000"
+
+# Fonts
+[[headers]]
+  for = "*.woff2"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+# Sitemap
+[[headers]]
+  for = "/sitemap.xml"
+  [headers.values]
+    Content-Type = "application/xml; charset=utf-8"
+    Cache-Control = "public, max-age=3600"
+
+[[headers]]
+  for = "/dynamic-sitemap.xml"
+  [headers.values]
+    Content-Type = "application/xml; charset=utf-8"
+    Cache-Control = "public, max-age=3600"
+
+# HTML - no cache
+[[headers]]
+  for = "/"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
+
+# Security headers
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-Content-Type-Options = "nosniff"

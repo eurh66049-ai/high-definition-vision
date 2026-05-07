@@ -1,0 +1,24 @@
+# humanstxt.org/
+# The humans responsible & technology colophon
+
+# TEAM
+
+    Developer: منصة كتبي
+    Contact: admin [at] kotobi.xyz
+    From: المملكة العربية السعودية
+
+# TECHNOLOGY COLOPHON
+
+    Language: Arabic (العربية)
+    Doctype: HTML5
+    IDE: Visual Studio Code
+    Components: React, TypeScript, Tailwind CSS
+    Backend: Supabase
+    Hosting: Netlify
+    
+# SITE
+
+    Last update: 2026/02/08
+    Language: Arabic / العربية
+    Standards: HTML5, CSS3, JavaScript ES6+
+    Software: React 18, TypeScript, Vite

@@ -1,0 +1,32 @@
+-- حذف الجداول والوظائف غير المستخدمة من قاعدة البيانات
+
+-- 1. حذف الجداول غير المستخدمة
+DROP TABLE IF EXISTS public.admin_bulk_submissions CASCADE;
+DROP TABLE IF EXISTS public.book_upload_timers CASCADE;
+DROP TABLE IF EXISTS public.book_processing_status CASCADE;
+DROP TABLE IF EXISTS public.book_status_messages CASCADE;
+DROP TABLE IF EXISTS public.book_cache CASCADE;
+DROP TABLE IF EXISTS public.book_pages CASCADE;
+DROP TABLE IF EXISTS public.pdf_pages CASCADE;
+DROP TABLE IF EXISTS public.pdf_processing CASCADE;
+DROP TABLE IF EXISTS public.pdf_image_conversion CASCADE;
+DROP TABLE IF EXISTS public.pdf_metadata CASCADE;
+DROP TABLE IF EXISTS public.pdf_display_settings CASCADE;
+DROP TABLE IF EXISTS public.custom_pdf_viewer CASCADE;
+DROP TABLE IF EXISTS public.pdf_annotations CASCADE;
+DROP TABLE IF EXISTS public.pdf_bookmarks CASCADE;
+DROP TABLE IF EXISTS public.pdf_viewer_state CASCADE;
+DROP TABLE IF EXISTS public.upload_session_tracking CASCADE;
+DROP TABLE IF EXISTS public.large_file_upload_progress CASCADE;
+DROP TABLE IF EXISTS public.password_reset_requests CASCADE;
+DROP TABLE IF EXISTS public.email_verification_codes CASCADE;
+DROP TABLE IF EXISTS public.push_subscriptions CASCADE;
+DROP TABLE IF EXISTS public.book_pdfs CASCADE;
+DROP TABLE IF EXISTS public.contact_messages CASCADE;
+DROP TABLE IF EXISTS public.global_book_order CASCADE;
+DROP TABLE IF EXISTS public.admin_batch_books CASCADE;
+DROP TABLE IF EXISTS public.admin_book_batches CASCADE;
+DROP TABLE IF EXISTS public.admin_multi_book_uploads CASCADE;
+DROP TABLE IF EXISTS public.admin_uploaded_books CASCADE;
+DROP TABLE IF EXISTS public.media_files CASCADE;
+DROP TABLE IF EXISTS public.book_media CASCADE;

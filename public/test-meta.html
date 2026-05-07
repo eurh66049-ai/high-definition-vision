@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>اختبار Edge Function - منصة كتبي</title>
+    <style>
+        body {
+            font-family: 'Noto Kufi Arabic', Arial, sans-serif;
+            padding: 20px;
+            direction: rtl;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .test-link {
+            display: block;
+            margin: 10px 0;
+            padding: 15px;
+            background: #f8f9fa;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            text-decoration: none;
+            color: #333;
+        }
+        .test-link:hover {
+            background: #e9ecef;
+        }
+        .debug-link {
+            background: #d4edda;
+            border-color: #c3e6cb;
+        }
+        h1 {
+            color: #dc2626;
+            text-align: center;
+        }
+        .note {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>اختبار Edge Function - معلومات الكتب</h1>
+        
+        <div class="note">
+            <strong>ملاحظة:</strong> هذه الصفحة للاختبار فقط. الروابط أدناه تختبر ما إذا كانت Edge Function تعمل بشكل صحيح لعرض معلومات الكتب عند المشاركة.
+        </div>
+
+        <h2>الكتب المتاحة للاختبار:</h2>
+
+        <a href="/book/a9f874f4-c018-401b-bd5c-fc6d4ec1c17f" class="test-link">
+            <strong>كتاب حديث المساء - طه حسين</strong><br>
+            /book/a9f874f4-c018-401b-bd5c-fc6d4ec1c17f
+        </a>
+
+        <a href="/book/93061f8c-073f-4ff3-a54a-659965da835d" class="test-link">
+            <strong>كتاب خمارة القط الأسود - نجيب محفوظ</strong><br>
+            /book/93061f8c-073f-4ff3-a54a-659965da835d
+        </a>
+
+        <a href="/book/1c4aa040-bc83-486d-9938-87fbe4cb95a8" class="test-link">
+            <strong>دع القلق وابدأ الحياة - ديل كارنيجي</strong><br>
+            /book/1c4aa040-bc83-486d-9938-87fbe4cb95a8
+        </a>
+
+        <a href="/book/كتاب السيف الأسود" class="test-link">
+            <strong>كتاب السيف الأسود - إبتهال الراجحي</strong><br>
+            /book/كتاب السيف الأسود
+        </a>
+
+        <h2>روابط اختبار مع debug mode:</h2>
+
+        <a href="/book/a9f874f4-c018-401b-bd5c-fc6d4ec1c17f?debug=1" class="test-link debug-link">
+            <strong>كتاب حديث المساء (وضع اختبار)</strong><br>
+            /book/a9f874f4-c018-401b-bd5c-fc6d4ec1c17f?debug=1
+        </a>
+
+        <div class="note">
+            <strong>كيفية الاختبار:</strong><br>
+            1. انسخ أحد الروابط أعلاه<br>
+            2. الصقه في تطبيق WhatsApp أو Telegram<br>
+            3. يجب أن تظهر معلومات الكتاب (العنوان، المؤلف، الوصف) وليس معلومات الموقع العامة<br>
+            4. أو استخدم روابط الاختبار مع debug mode لرؤية النتيجة مباشرة
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,1257 @@
+/* Thmanyah Sans - local font family */
+@font-face {
+  font-family: 'Thmanyah Sans';
+  src: url('/fonts/thmanyahsans-Light.woff2') format('woff2');
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Thmanyah Sans';
+  src: url('/fonts/thmanyahsans-Regular.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Thmanyah Sans';
+  src: url('/fonts/thmanyahsans-Medium.woff2') format('woff2');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Thmanyah Sans';
+  src: url('/fonts/thmanyahsans-Bold.woff2') format('woff2');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Thmanyah Sans';
+  src: url('/fonts/thmanyahsans-Black.woff2') format('woff2');
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* الوضع الفاتح - Light Mode - ألوان مريحة للعين */
+    --background: 220 20% 97%; /* خلفية بلمسة زرقاء خفيفة - أقل إجهاداً من الأبيض الخالص */
+    --foreground: 220 15% 20%; /* نص داكن دافئ بدل أسود خالص */
+
+    /* خلفية بطاقات الكتب - Book Cards Background */
+    --books-background: 220 20% 97%;
+
+    --card: 220 25% 99%; /* بطاقات بلمسة زرقاء دافئة خفيفة */
+    --card-foreground: 220 15% 20%;
+
+    /* إطار رفع الكتاب - Upload form background */
+    --upload-form-bg: 220 25% 99%;
+
+    --popover: 220 25% 99%;
+    --popover-foreground: 220 15% 20%;
+
+    --primary: 245 100% 63%; /* #5c42ff - أغمق قليلاً لنسبة تباين 4.5:1 */
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 220 18% 94%;
+    --secondary-foreground: 220 15% 20%;
+
+    --muted: 220 16% 95%;
+    --muted-foreground: 220 10% 46%;
+
+    --accent: 220 18% 93%;
+    --accent-foreground: 220 15% 20%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 220 18% 90%;
+    --input: 220 18% 90%;
+    --ring: 220 15% 20%;
+
+    /* Chat bubbles (light mode) */
+    --chat-outgoing: 221 83% 53%;
+    --chat-outgoing-foreground: 0 0% 100%;
+    --chat-incoming: 220 20% 95%;
+    --chat-incoming-foreground: 220 15% 15%;
+
+    --radius: 1rem;
+  }
+
+  .dark {
+    /* الوضع الداكن - Dark Mode - ألوان مريحة للعين */
+    --background: 220 15% 10%; /* أزرق داكن دافئ بدل أسود خالص */
+    --foreground: 220 10% 90%; /* أبيض مائل للرمادي الدافئ - أقل إجهاداً من الأبيض الخالص */
+
+    /* خلفية بطاقات الكتب */
+    --books-background: 220 15% 10%;
+
+    --card: 220 14% 14%; /* بطاقات بلمسة زرقاء دافئة */
+    --card-foreground: 220 10% 90%;
+
+    /* إطار رفع الكتاب في الوضع المظلم */
+    --upload-form-bg: 220 14% 14%;
+
+    --popover: 220 14% 15%;
+    --popover-foreground: 220 10% 90%;
+
+    --primary: 245 85% 72%; /* أرجواني أنعم قليلاً */
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 220 15% 20%;
+    --secondary-foreground: 220 10% 90%;
+
+    --muted: 220 12% 18%;
+    --muted-foreground: 220 8% 65%;
+
+    --accent: 245 30% 25%;
+    --accent-foreground: 220 10% 90%;
+
+    --destructive: 0 72% 55%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 220 12% 22%;
+    --input: 220 12% 22%;
+    --ring: 245 50% 50%;
+
+    /* Chat bubbles (dark mode) */
+    --chat-outgoing: 221 70% 50%;
+    --chat-outgoing-foreground: 0 0% 100%;
+    --chat-incoming: 220 14% 18%;
+    --chat-incoming-foreground: 220 10% 90%;
+  }
+
+  /* تغيير تعريف الخط إلى Cairo */
+  .font-cairo {
+    font-family: 'Thmanyah Sans', 'Cairo', sans-serif !important;
+    font-weight: 400 !important;
+    letter-spacing: 0.01em;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  /* ضمان اتجاه ثابت للصفحة */
+  html {
+    direction: rtl !important;
+  }
+
+  body {
+    direction: rtl !important;
+  }
+
+  body {
+    @apply bg-background text-foreground font-cairo;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+    font-weight: 400;
+    transition: background-color 0.3s ease, color 0.3s ease;
+
+    /* تحسين عرض النصوص للشاشات عالية الدقة */
+    font-size: 16px;
+    line-height: 1.6;
+  }
+
+  /* تحسين الخطوط للشاشات عالية الدقة */
+  @media screen and (-webkit-min-device-pixel-ratio: 2), 
+         screen and (min-resolution: 192dpi),
+         screen and (min-resolution: 2dppx) {
+    body {
+      font-weight: 400 !important;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    .font-bold {
+      font-weight: 700 !important;
+    }
+
+    .font-semibold {
+      font-weight: 600 !important;
+    }
+
+    .font-black {
+      font-weight: 900 !important;
+    }
+  }
+
+  h1 {
+    @apply font-cairo text-foreground;
+    font-size: 28px;
+    font-weight: 700;
+    word-break: break-word;
+  }
+
+  h2 {
+    @apply font-cairo text-foreground;
+    font-size: 24px;
+    font-weight: 700;
+    word-break: break-word;
+  }
+
+  h3 {
+    @apply font-cairo text-foreground;
+    font-size: 20px;
+    font-weight: 600;
+    word-break: break-word;
+  }
+
+  h4, h5, h6 {
+    @apply font-cairo text-foreground;
+    font-size: 18px;
+    font-weight: 600;
+    word-break: break-word;
+  }
+
+  p {
+    @apply font-cairo text-foreground;
+    font-size: 16px;
+    font-weight: 400;
+    word-break: break-word;
+  }
+
+  .book-title {
+    @apply font-cairo text-foreground;
+    font-size: 22px;
+    word-break: break-word;
+    font-weight: 700;
+  }
+
+  .author-name {
+    @apply font-cairo text-foreground;
+    font-size: 18px;
+    word-break: break-word;
+    font-weight: 600;
+  }
+
+  /* خطوط محددة لأسماء الكتب في البطاقات */
+  .book-card-title {
+    @apply font-cairo text-foreground;
+    font-weight: 600 !important;
+    font-size: 18px !important;
+    letter-spacing: 0.01em;
+    line-height: 1.3;
+  }
+
+  /* خطوط محددة لأسماء المؤلفين */
+  .author-card-name {
+    @apply font-cairo text-foreground;
+    font-weight: 600 !important;
+    font-size: 16px !important;
+    letter-spacing: 0.015em;
+  }
+
+  /* فئة إطار رفع الكتاب */
+  .upload-form-card {
+    background-color: hsl(var(--upload-form-bg)) !important;
+    border-color: hsl(var(--upload-form-bg)) !important;
+  }
+
+  /* تحسين ظهور الأزرار للشاشات عالية الدقة */
+  button {
+    @apply transition-all duration-300 touch-manipulation;
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  /* تحسين الخطوط الصغيرة للشاشات عالية الدقة */
+  .text-xs {
+    font-size: 12px;
+    font-family: 'Thmanyah Sans', 'Cairo', sans-serif;
+    font-weight: 400;
+  }
+
+  .text-sm {
+    font-size: 14px;
+    font-family: 'Thmanyah Sans', 'Cairo', sans-serif;
+    font-weight: 400;
+  }
+
+  .text-base {
+    font-size: 16px;
+    font-family: 'Thmanyah Sans', 'Cairo', sans-serif;
+    font-weight: 400;
+  }
+
+  .text-lg {
+    font-size: 18px;
+    font-family: 'Thmanyah Sans', 'Cairo', sans-serif;
+    font-weight: 400;
+  }
+}
+
+/* تحسين التمرير السلس للجوال */
+.smooth-scroll-container {
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+}
+
+.books-grid {
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+  transform: translateZ(0);
+  will-change: scroll-position;
+  backface-visibility: hidden;
+  perspective: 1000px;
+
+  /* تحسين عرض الشبكة للشاشات عالية الدقة */
+  gap: clamp(8px, 2vw, 24px);
+}
+
+/* تحسين أداء التمرير للأجهزة المحمولة */
+@supports (-webkit-overflow-scrolling: touch) {
+  .smooth-scroll-container,
+  .books-grid {
+    -webkit-overflow-scrolling: touch;
+    -webkit-transform: translateZ(0);
+    -webkit-backface-visibility: hidden;
+    -webkit-perspective: 1000px;
+  }
+}
+
+/* تحسين الأداء للشاشات اللمسية */
+@media (hover: none) and (pointer: coarse) {
+  .books-grid {
+    scroll-snap-type: y proximity;
+    scroll-padding: 1rem;
+  }
+
+  .book-card {
+    scroll-snap-align: start;
+    scroll-margin: 1rem;
+  }
+}
+
+/* إخفاء شريط التمرير في جميع المتصفحات */
+* {
+  scrollbar-width: none !important;
+  -ms-overflow-style: none !important;
+}
+
+*::-webkit-scrollbar {
+  display: none !important;
+  width: 0px !important;
+  height: 0px !important;
+}
+
+*::-webkit-scrollbar-track {
+  display: none !important;
+}
+
+*::-webkit-scrollbar-thumb {
+  display: none !important;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  display: none !important;
+}
+
+iframe {
+  scrollbar-width: none !important;
+  -ms-overflow-style: none !important;
+}
+
+iframe::-webkit-scrollbar {
+  display: none !important;
+}
+
+/* Book card hover effect محسن للشاشات عالية الدقة */
+.book-card {
+  @apply transition-all duration-500 ease-out;
+  transform-style: preserve-3d;
+  transform: translateZ(0);
+  will-change: transform;
+  backface-visibility: hidden;
+}
+
+.book-card:hover {
+  @apply shadow-2xl;
+  transform: translateY(-4px) scale(1.02) translateZ(0);
+}
+
+/* تحسين عرض الشبكة للشاشات المختلفة */
+.responsive-grid {
+  display: grid;
+  gap: clamp(8px, 2vw, 20px);
+  grid-template-columns: repeat(auto-fill, minmax(clamp(120px, 25vw, 180px), 1fr));
+}
+
+/* تحسين عرض بطاقات الكتب للشاشات عالية الدقة */
+@media screen and (-webkit-min-device-pixel-ratio: 2.5), 
+       screen and (min-resolution: 240dpi) {
+  .books-grid {
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: clamp(12px, 3vw, 28px);
+  }
+}
+
+@media screen and (-webkit-min-device-pixel-ratio: 3.5), 
+       screen and (min-resolution: 336dpi) {
+  .books-grid {
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: clamp(16px, 4vw, 32px);
+  }
+}
+
+/* App-like styles */
+.app-container {
+  @apply w-full mx-auto shadow-xl rounded-3xl overflow-hidden;
+  max-width: 100%;
+}
+
+@media (min-width: 480px) {
+  .app-container {
+    max-width: 480px;
+  }
+}
+
+/* شريط التنقل السفلي محسن - مخفي على سطح المكتب */
+.bottom-nav {
+  @apply flex justify-around items-center p-3 text-xs sm:text-sm font-cairo bg-card border-t border-border;
+  z-index: 200 !important;
+  position: fixed !important;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  min-height: 65px;
+  font-weight: 400;
+  width: 100vw !important;
+  max-width: 100vw !important;
+  overflow-x: hidden !important;
+  box-sizing: border-box !important;
+  touch-action: pan-y !important;
+}
+
+/* إخفاء شريط التنقل السفلي على أجهزة سطح المكتب */
+@media (min-width: 768px) {
+  .bottom-nav {
+    display: none !important;
+  }
+}
+
+.bottom-nav-item {
+  @apply flex flex-col items-center justify-center relative text-foreground font-cairo;
+  z-index: 201;
+  min-width: 50px;
+  min-height: 50px;
+  font-weight: 400;
+  flex: 1;
+  max-width: 80px;
+  touch-action: manipulation !important;
+  pointer-events: auto !important;
+}
+
+.bottom-nav-item svg {
+  @apply mb-1 text-foreground;
+  width: clamp(20px, 4vw, 24px);
+  height: clamp(20px, 4vw, 24px);
+}
+
+/* Additional spacing for pages with bottom navigation - فقط للجوال */
+.page-with-bottom-nav {
+  padding-bottom: clamp(80px, 15vw, 120px);
+}
+
+/* مسافة إضافية خاصة لصفحة اتصل بنا */
+.contact-page-mobile {
+  padding-bottom: clamp(120px, 20vw, 160px) !important;
+}
+
+@media (min-width: 768px) {
+  .page-with-bottom-nav {
+    padding-bottom: 0;
+  }
+}
+
+/* Fix for elements that might be hidden by the bottom navigation - فقط للجوال */
+.bottom-space {
+  padding-bottom: clamp(80px, 15vw, 120px);
+}
+
+@media (min-width: 768px) {
+  .bottom-space {
+    padding-bottom: 0;
+  }
+}
+
+.mobile-container {
+  @apply mx-auto bg-background shadow-xl rounded-t-3xl overflow-hidden;
+  max-width: 100%;
+}
+
+@media (min-width: 480px) {
+  .mobile-container {
+    max-width: 480px;
+  }
+}
+
+.mobile-header {
+  @apply sticky top-0 z-10 bg-gradient-to-r from-book-primary to-book-secondary text-white rounded-t-3xl;
+  padding: clamp(12px, 3vw, 20px);
+}
+
+.mobile-body {
+  padding: clamp(12px, 3vw, 20px);
+}
+
+/* تحسين التجاوب للجوال */
+.container {
+  @apply w-full;
+  max-width: 100%;
+  padding: clamp(12px, 3vw, 20px) clamp(16px, 4vw, 24px);
+}
+
+.book-details-container {
+  @apply flex flex-col;
+  gap: clamp(16px, 4vw, 24px);
+}
+
+.book-image-container {
+  @apply w-full flex justify-center;
+  margin-bottom: clamp(16px, 4vw, 24px);
+}
+
+.book-info-container {
+  @apply w-full;
+}
+
+/* ضمان منطقة لمس كافية للأزرار */
+button, .clickable {
+  min-height: clamp(40px, 8vw, 48px);
+  min-width: clamp(40px, 8vw, 48px);
+}
+
+/* تحسين المسافات للجوال */
+.mobile-space-y {
+  gap: clamp(12px, 3vw, 20px);
+}
+
+.mobile-space-x {
+  gap: clamp(8px, 2vw, 16px);
+}
+
+/* ضمان مسافة مناسبة من شريط التنقل السفلي - فقط للجوال */
+.has-bottom-nav {
+  padding-bottom: clamp(80px, 15vw, 120px);
+}
+
+@media (min-width: 768px) {
+  .has-bottom-nav {
+    padding-bottom: 0;
+  }
+}
+
+.profile-container {
+  margin-bottom: clamp(96px, 18vw, 140px);
+}
+
+@media (min-width: 768px) {
+  .profile-container {
+    margin-bottom: 0;
+  }
+}
+
+/* هامش سفلي آمن للأقسام التي تحت شريط التنقل السفلي */
+.pb-safe-bottom {
+  padding-bottom: calc(108px + env(safe-area-inset-bottom)) !important;
+}
+
+@media (min-width: 768px) {
+  .pb-safe-bottom {
+    padding-bottom: 0 !important;
+  }
+}
+
+/* Animations محسنة */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    transform: scale(0.9);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200px 0;
+  }
+  100% {
+    background-position: calc(200px + 100%) 0;
+  }
+}
+
+/* Page transitions */
+.page-transition {
+  animation: fadeIn 0.6s ease-out;
+}
+
+/* Hover effects محسنة */
+.hover-scale {
+  @apply transition-all duration-300 ease-out;
+}
+
+.hover-scale:hover {
+  transform: scale(1.03) translateY(-2px);
+}
+
+/* Button effects محسنة */
+.btn-pulse {
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-pulse::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border-radius: 12px;
+  background: radial-gradient(circle, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0) 70%);
+  transform: scale(0);
+  animation: pulse-white 2.5s ease-in-out infinite;
+  z-index: 0;
+}
+
+@keyframes pulse-white {
+  0% {
+    opacity: 1;
+    transform: scale(0.8);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(2);
+  }
+}
+
+.btn-text {
+  position: relative;
+  z-index: 1;
+}
+
+/* تأثيرات للأزرار محسنة */
+.action-btn {
+  @apply relative overflow-hidden rounded-xl transition-all duration-300;
+}
+
+.action-btn:hover::after {
+  content: '';
+  @apply absolute inset-0 bg-white/15 block;
+}
+
+.action-btn:active {
+  @apply transform scale-95;
+}
+
+.book-btn-gradient {
+  @apply bg-gradient-to-r from-book-primary via-red-500 to-book-secondary text-white transform hover:scale-105 transition-all duration-300;
+}
+
+/* Book styling محسن */
+.book-author {
+  @apply font-cairo text-book-author;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.book-description {
+  @apply font-cairo text-gray-700 leading-relaxed;
+  font-size: 16px;
+  font-weight: 400;
+}
+
+/* Author cards */
+.author-card-title {
+  @apply font-cairo text-book-author;
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.author-card-bio {
+  @apply font-cairo text-gray-600;
+  font-size: 16px;
+  font-weight: 400;
+}
+
+/* Favorites button styling محسن */
+.favorite-btn {
+  @apply text-gray-400 hover:text-red-500 transition-all duration-300;
+}
+
+.favorite-btn.active {
+  @apply text-red-500;
+}
+
+/* تحسين مظهر أزرار المشاركة */
+.share-btn {
+  @apply flex items-center justify-center rounded-full p-2 sm:p-3 shadow-lg hover:shadow-xl transform hover:scale-110 transition-all duration-300;
+}
+
+/* أزرار القراءة العائمة */
+.floating-controls {
+  @apply fixed top-0 left-0 right-0 z-50 bg-white/30 dark:bg-black/30 backdrop-blur-lg border-b border-white/20 shadow-lg;
+}
+
+.glass-button {
+  @apply rounded-full bg-white/20 dark:bg-black/20 backdrop-blur-xl p-0.5 sm:p-1 border border-white/30 dark:border-white/10 shadow-md;
+}
+
+.icon-button {
+  @apply rounded-full bg-transparent hover:bg-white/20 size-7 sm:size-8 md:size-9;
+}
+
+.luxury-gradient-text {
+  @apply text-transparent bg-clip-text bg-gradient-to-r from-book-primary via-red-500 to-book-secondary;
+}
+
+/* تأثيرات زجاجية جديدة محسنة */
+.glass-morphism {
+  @apply backdrop-blur-xl bg-white/25 border border-white/40 shadow-xl;
+}
+
+.neo-blur {
+  @apply backdrop-blur-2xl bg-black/30 border border-white/10;
+}
+
+/* تأثيرات الظل محسنة */
+.neo-shadow {
+  @apply shadow-[0_12px_40px_rgb(0,0,0,0.15)];
+}
+
+.floating-shadow {
+  @apply shadow-[0_15px_35px_rgba(239,68,68,0.12)];
+}
+
+/* تدرجات جديدة محسنة */
+.gradient-purple-pink {
+  @apply bg-gradient-to-r from-purple-600/90 via-pink-500/90 to-red-500/90;
+}
+
+.gradient-blue-teal {
+  @apply bg-gradient-to-r from-blue-500/90 via-cyan-400/90 to-teal-500/90;
+}
+
+.gradient-warm {
+  @apply bg-gradient-to-br from-red-400 via-red-400 to-red-400;
+}
+
+/* أزرار الإجراءات العائمة في قارئ الكتب محسنة */
+.floating-action-button {
+  @apply rounded-full shadow-xl flex items-center justify-center text-white h-12 w-12 sm:h-14 sm:w-14 hover:scale-110 active:scale-95 transition-all duration-300;
+}
+
+/* تأثيرات متقدمة للبطاقات */
+.book-card-enhanced {
+  @apply relative overflow-hidden rounded-2xl transition-all duration-500 hover:shadow-2xl;
+  background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%);
+  backdrop-filter: blur(10px);
+}
+
+.book-card-enhanced::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, transparent 50%, rgba(255,255,255,0.05) 100%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.book-card-enhanced:hover::before {
+  opacity: 1;
+}
+
+/* تأثير التحميل الشيمر */
+.shimmer {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200px 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+/* تخصيص عارض الملفات ليبدأ من تحت شريط التنقل مباشرة */
+.doc-viewer-container {
+  position: fixed !important;
+  top: 70px !important; /* يبدأ من تحت شريط التنقل */
+  left: 0 !important;
+  width: 100vw !important;
+  height: calc(100vh - 70px) !important; /* يأخذ باقي الشاشة */
+  z-index: 40 !important;
+  background: white;
+  overflow: hidden !important; /* لإخفاء الأجزاء الزائدة */
+}
+
+.doc-viewer-container.dark {
+  background: #121212;
+}
+
+/* تكبير iframe لإخفاء شريط العارض السفلي */
+.doc-viewer-container iframe {
+  position: absolute !important;
+  top: -20px !important; /* رفع العارض قليلاً */
+  left: -20px !important; /* توسيط العارض */
+  width: calc(100% + 40px) !important; /* توسيع العرض */
+  height: calc(100% + 60px) !important; /* توسيع الارتفاع لإخفاء الشريط السفلي */
+  border: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+}
+
+/* Book Animation Keyframes */
+@keyframes float-book-1 {
+  0% {
+    transform: translateY(0px) translateX(0px) rotate(-12deg);
+  }
+  25% {
+    transform: translateY(-15px) translateX(10px) rotate(-8deg);
+  }
+  50% {
+    transform: translateY(-25px) translateX(5px) rotate(-15deg);
+  }
+  75% {
+    transform: translateY(-10px) translateX(-5px) rotate(-10deg);
+  }
+  100% {
+    transform: translateY(0px) translateX(0px) rotate(-12deg);
+  }
+}
+
+@keyframes float-book-2 {
+  0% {
+    transform: translateY(0px) translateX(0px) rotate(6deg) scale(1);
+  }
+  30% {
+    transform: translateY(-20px) translateX(-8px) rotate(12deg) scale(1.05);
+  }
+  60% {
+    transform: translateY(-30px) translateX(15px) rotate(3deg) scale(0.98);
+  }
+  90% {
+    transform: translateY(-8px) translateX(-10px) rotate(9deg) scale(1.02);
+  }
+  100% {
+    transform: translateY(0px) translateX(0px) rotate(6deg) scale(1);
+  }
+}
+
+@keyframes spin-page {
+  0% {
+    transform: rotate(12deg) translateY(0px) scale(1);
+  }
+  25% {
+    transform: rotate(45deg) translateY(-10px) scale(1.1);
+  }
+  50% {
+    transform: rotate(180deg) translateY(-5px) scale(0.95);
+  }
+  75% {
+    transform: rotate(270deg) translateY(-15px) scale(1.05);
+  }
+  100% {
+    transform: rotate(372deg) translateY(0px) scale(1);
+  }
+}
+
+@keyframes drift-symbol-1 {
+  0% {
+    transform: translateY(0px) translateX(0px) rotate(0deg);
+  }
+  33% {
+    transform: translateY(-20px) translateX(15px) rotate(5deg);
+  }
+  66% {
+    transform: translateY(-10px) translateX(-10px) rotate(-3deg);
+  }
+  100% {
+    transform: translateY(0px) translateX(0px) rotate(0deg);
+  }
+}
+
+@keyframes drift-symbol-2 {
+  0% {
+    transform: translateY(0px) translateX(0px) scale(1) rotate(0deg);
+  }
+  40% {
+    transform: translateY(-25px) translateX(-20px) scale(1.1) rotate(-8deg);
+  }
+  80% {
+    transform: translateY(-15px) translateX(12px) scale(0.95) rotate(5deg);
+  }
+  100% {
+    transform: translateY(0px) translateX(0px) scale(1) rotate(0deg);
+  }
+}
+
+@keyframes rotate-quill {
+  0% {
+    transform: rotate(0deg) translateY(0px) scale(1);
+  }
+  25% {
+    transform: rotate(90deg) translateY(-8px) scale(1.1);
+  }
+  50% {
+    transform: rotate(180deg) translateY(-5px) scale(0.9);
+  }
+  75% {
+    transform: rotate(270deg) translateY(-12px) scale(1.05);
+  }
+  100% {
+    transform: rotate(360deg) translateY(0px) scale(1);
+  }
+}
+
+@keyframes twinkle {
+  0% {
+    opacity: 0.3;
+    transform: scale(1) rotate(0deg);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.3) rotate(180deg);
+  }
+  100% {
+    opacity: 0.3;
+    transform: scale(1) rotate(360deg);
+  }
+}
+
+/* Carousel Animation Keyframes - محسن وأبطأ */
+@keyframes carousel-slide-left {
+  0% {
+    transform: translateX(150px) translateY(20px) rotate(-12deg) scale(0.6);
+    opacity: 0;
+  }
+  15% {
+    transform: translateX(30px) translateY(10px) rotate(-10deg) scale(0.9);
+    opacity: 0.6;
+  }
+  30% {
+    transform: translateX(0px) translateY(0px) rotate(-8deg) scale(1);
+    opacity: 0.8;
+  }
+  50% {
+    transform: translateX(-10px) translateY(-15px) rotate(-12deg) scale(1.05);
+    opacity: 0.8;
+  }
+  70% {
+    transform: translateX(-30px) translateY(-10px) rotate(-15deg) scale(1);
+    opacity: 0.6;
+  }
+  85% {
+    transform: translateX(-80px) translateY(-5px) rotate(-18deg) scale(0.9);
+    opacity: 0.3;
+  }
+  100% {
+    transform: translateX(-150px) translateY(20px) rotate(-20deg) scale(0.6);
+    opacity: 0;
+  }
+}
+
+@keyframes carousel-slide-right {
+  0% {
+    transform: translateX(-150px) translateY(25px) rotate(8deg) scale(0.6);
+    opacity: 0;
+  }
+  15% {
+    transform: translateX(-30px) translateY(15px) rotate(10deg) scale(0.9);
+    opacity: 0.6;
+  }
+  30% {
+    transform: translateX(0px) translateY(0px) rotate(12deg) scale(1);
+    opacity: 0.75;
+  }
+  50% {
+    transform: translateX(15px) translateY(-20px) rotate(8deg) scale(1.05);
+    opacity: 0.75;
+  }
+  70% {
+    transform: translateX(35px) translateY(-15px) rotate(15deg) scale(1);
+    opacity: 0.5;
+  }
+  85% {
+    transform: translateX(80px) translateY(-8px) rotate(18deg) scale(0.9);
+    opacity: 0.25;
+  }
+  100% {
+    transform: translateX(150px) translateY(25px) rotate(20deg) scale(0.6);
+    opacity: 0;
+  }
+}
+
+@keyframes carousel-spin {
+  0% {
+    transform: rotate(0deg) translateY(30px) scale(0.6);
+    opacity: 0;
+  }
+  10% {
+    transform: rotate(20deg) translateY(20px) scale(0.8);
+    opacity: 0.4;
+  }
+  20% {
+    transform: rotate(60deg) translateY(10px) scale(0.9);
+    opacity: 0.7;
+  }
+  40% {
+    transform: rotate(180deg) translateY(0px) scale(1);
+    opacity: 0.7;
+  }
+  60% {
+    transform: rotate(300deg) translateY(-10px) scale(1.05);
+    opacity: 0.7;
+  }
+  80% {
+    transform: rotate(340deg) translateY(-5px) scale(0.9);
+    opacity: 0.4;
+  }
+  90% {
+    transform: rotate(350deg) translateY(15px) scale(0.8);
+    opacity: 0.2;
+  }
+  100% {
+    transform: rotate(360deg) translateY(30px) scale(0.6);
+    opacity: 0;
+  }
+}
+
+@keyframes carousel-float {
+  0% {
+    transform: translateY(120px) translateX(20px) rotate(5deg) scale(0.6);
+    opacity: 0;
+  }
+  15% {
+    transform: translateY(80px) translateX(15px) rotate(3deg) scale(0.8);
+    opacity: 0.4;
+  }
+  30% {
+    transform: translateY(20px) translateX(10px) rotate(0deg) scale(1);
+    opacity: 0.65;
+  }
+  50% {
+    transform: translateY(-10px) translateX(5px) rotate(-3deg) scale(1.05);
+    opacity: 0.65;
+  }
+  70% {
+    transform: translateY(-40px) translateX(-5px) rotate(-5deg) scale(1);
+    opacity: 0.4;
+  }
+  85% {
+    transform: translateY(-80px) translateX(-15px) rotate(-8deg) scale(0.8);
+    opacity: 0.2;
+  }
+  100% {
+    transform: translateY(-120px) translateX(-20px) rotate(-10deg) scale(0.6);
+    opacity: 0;
+  }
+}
+
+@keyframes carousel-center-float {
+  0% {
+    transform: translateX(-50%) translateY(100px) scale(0.6) rotate(0deg);
+    opacity: 0;
+  }
+  15% {
+    transform: translateX(-50%) translateY(60px) scale(0.8) rotate(-3deg);
+    opacity: 0.3;
+  }
+  30% {
+    transform: translateX(-50%) translateY(20px) scale(1) rotate(-5deg);
+    opacity: 0.6;
+  }
+  50% {
+    transform: translateX(-50%) translateY(-15px) scale(1.1) rotate(3deg);
+    opacity: 0.6;
+  }
+  70% {
+    transform: translateX(-50%) translateY(-35px) scale(0.95) rotate(8deg);
+    opacity: 0.4;
+  }
+  85% {
+    transform: translateX(-50%) translateY(-70px) scale(0.8) rotate(10deg);
+    opacity: 0.2;
+  }
+  100% {
+    transform: translateX(-50%) translateY(-100px) scale(0.6) rotate(12deg);
+    opacity: 0;
+  }
+}
+
+/* Messages page: force white backgrounds only in LIGHT mode on /messages */
+html:not(.dark) .messages-page-white {
+  --background: 0 0% 100%; /* #ffffff */
+  --card: 0 0% 100%;       /* #ffffff */
+  --popover: 0 0% 100%;    /* #ffffff */
+  --foreground: 0 0% 15%;  /* dark text on white */
+  --muted-foreground: 0 0% 45%;
+  --accent: 210 14% 92%;
+  --accent-foreground: 0 0% 15%;
+}
+
+/* تحسينات الأداء المتقدمة للتطبيق */
+
+/* تحسين الخطوط والنصوص */
+* {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+/* تحسين التمرير المتقدم */
+html {
+  scroll-behavior: smooth;
+  overscroll-behavior: contain;
+}
+
+body {
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* تحسين انتقالات الصفحات */
+.page-transition {
+  transition: opacity 150ms ease-out;
+}
+
+.page-transition * {
+  pointer-events: none;
+}
+
+/* تحسين الصور */
+img {
+  content-visibility: auto;
+}
+
+/* تحسين البطاقات */
+.card-optimized {
+  contain: layout style paint;
+  content-visibility: auto;
+  contain-intrinsic-size: auto 320px;
+}
+
+/* تحسين الشبكات */
+.grid-optimized {
+  contain: layout style;
+}
+
+/* تحسين التمرير السلس */
+.smooth-scroll-container {
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+}
+
+/* إخفاء شريط التمرير مع الحفاظ على الوظيفة */
+.scrollbar-none {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+
+/* تحسين التفاعلات */
+.touch-optimized {
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* تحسين الانيميشن */
+.animation-optimized {
+  will-change: transform;
+  backface-visibility: hidden;
+  perspective: 1000px;
+}
+
+/* تحسين للشاشات عالية الدقة */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 2dppx) {
+  img {
+    image-rendering: auto;
+  }
+}
+
+/* تحسين لإيقاف الحركة - إزالة مؤقتة لضمان عمل أيقونات التحميل */
+@media (prefers-reduced-motion: reduce) {
+  .smooth-scroll-container {
+    scroll-behavior: auto;
+  }
+
+  /* السماح للـ spinners بالدوران حتى لو كان المستخدم يفضل تقليل الحركة */
+  .animate-spin {
+    animation: spin 1s linear infinite !important;
+  }
+}
+
+/* تحسين للوضع المظلم */
+@media (prefers-color-scheme: dark) {
+  * {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+}
+
+/* تحسين لأجهزة اللمس */
+@media (hover: none) and (pointer: coarse) {
+  .card-optimized:hover {
+    transform: none;
+  }
+
+  .touch-optimized {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+  }
+}

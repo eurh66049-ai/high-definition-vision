@@ -1,0 +1,39 @@
+-- تحديث جدول navigation_history لدعم scroll_position كـ DECIMAL
+ALTER TABLE public.navigation_history 
+ALTER COLUMN scroll_position TYPE DECIMAL;
+
+-- حذف الدالة القديمة لإعادة إنشائها
+DROP FUNCTION IF EXISTS public.get_last_navigation_state(text);
+
+-- إعادة إنشاء دالة get_last_navigation_state مع دعم DECIMAL
+CREATE OR REPLACE FUNCTION public.get_last_navigation_state(
+    p_session_id TEXT
+)
+RETURNS TABLE(
+    path TEXT,
+    scroll_position DECIMAL,
+    page_data JSONB,
+    created_at TIMESTAMP WITH TIME ZONE
+) AS $$
+BEGIN
+    RETURN QUERY
+    SELECT 
+        nh.path,
+        nh.scroll_position,
+        nh.page_data,
+        nh.created_at
+    FROM public.navigation_history nh
+    WHERE nh.session_id = p_session_id
+    ORDER BY nh.created_at DESC
+    LIMIT 1;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+-- تحديث RLS policies للمستخدمين غير المسجلين
+DROP POLICY IF EXISTS "Anonymous users can manage their session navigation" ON public.navigation_history;
+
+CREATE POLICY "Anonymous users can manage their session navigation"
+ON public.navigation_history
+FOR ALL
+USING (user_id IS NULL AND session_id IS NOT NULL)
+WITH CHECK (user_id IS NULL AND session_id IS NOT NULL);

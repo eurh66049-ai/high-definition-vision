@@ -1,0 +1,11 @@
+# Block access to specific problematic file
+RewriteEngine On
+RewriteRule ^lovable-uploads/1bb33db9-4b1a-47cc-9840-9255a098937c\.png$ - [F,L]
+
+# Force correct MIME type for favicon
+<FilesMatch "\.(ico|png)$">
+    Header set Cache-Control "public, max-age=86400"
+</FilesMatch>
+
+# Redirect old favicon requests to new one
+RedirectMatch 301 ^/favicon\.ico$ /lovable-uploads/04f5f992-8006-459a-a544-51a68f32db46.png

@@ -1,0 +1,15 @@
+
+# Redirect old domain to new domain
+https://kotobi.netlify.app/* https://kotobi.xyz/:splat 301!
+
+# Favicon redirect to fix browser history icon issue
+/favicon.ico /lovable-uploads/04f5f992-8006-459a-a544-51a68f32db46.png 301!
+
+# Handle static assets
+/static/*  /static/:splat  200
+/assets/*  /assets/:splat  200
+
+# Netlify redirects file for SPA routing
+# Handle all routes to index.html for React Router
+/*    /index.html   200
+

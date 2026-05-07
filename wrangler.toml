@@ -1,0 +1,14 @@
+name = "kutubi-platform"
+compatibility_date = "2024-01-01"
+
+[build]
+command = "npm install && npm run build"
+cwd = "."
+
+[build.environment]
+NODE_VERSION = "20"
+
+[[pages]]
+production_build_command = "npm install && npm run build"
+preview_build_command = "npm install && npm run build"
+build_output_dir = "dist"

@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="google-site-verification" content="O28kCNKFn8LVZ3KsLs8m7YYxtZqu76dcnOdqXBmGfDo" />
+
+    <!-- تطبيق الثيم فوراً لتجنب الوميض -->
+    <script>
+      (function() {
+        var t = localStorage.getItem('theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        document.documentElement.classList.add(t);
+      })();
+    </script>
+
+    <!-- Preconnect to critical origins -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="preconnect" href="https://kydmyxsgyxeubhmqzrgo.supabase.co" crossorigin />
+    <link rel="dns-prefetch" href="https://kydmyxsgyxeubhmqzrgo.supabase.co" />
+    <link rel="dns-prefetch" href="https://cdn.onesignal.com" />
+    <link rel="dns-prefetch" href="https://www.googletagmanager.com" />
+
+    <!-- Font: Thmanyah Sans - loaded locally via @font-face in CSS -->
+    <link rel="preload" href="/fonts/thmanyahsans-Regular.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/thmanyahsans-Bold.woff2" as="font" type="font/woff2" crossorigin />
+
+    <!-- Favicon - single entry -->
+    <link rel="icon" type="image/png" href="/favicon.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/favicon.png" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon.png" />
+
+    <!-- PWA -->
+    <meta name="theme-color" content="#dc2626" />
+    <meta name="msapplication-TileColor" content="#dc2626" />
+    <link rel="manifest" href="/manifest.json" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="كتبي" />
+    <meta name="application-name" content="كتبي" />
+
+    <!-- Google Site Verification -->
+    <meta name="google-site-verification" content="HkNxX1DL7iSU2O-jOOLf5I_n8tI8-ckAO4XJZwHG24c" />
+    <meta name="google-site-verification" content="6Tlhs-gQ_ZcD32SAfEQD1j5wwOgnCXq0dE7h-vvISgY" />
+    <meta name="msvalidate.01" content="569C405E5568807BCEAB89B5A0718555" />
+
+    <!-- Primary SEO Meta Tags -->
+    <title>منصة كتبي | مكتبة رقمية عربية مجانية - اقرأ وحمّل آلاف الكتب والروايات PDF</title>
+    <meta name="description" content="منصة كتبي أكبر مكتبة رقمية عربية مجانية. اقرأ وحمّل أكثر من 10,000 كتاب ورواية PDF مجاناً في الأدب والعلوم والتنمية الذاتية والتاريخ والفلسفة. انضم لمجتمع القراء العرب الآن.">
+    <meta name="keywords" content="كتب عربية مجانية, مكتبة رقمية عربية, تحميل كتب PDF مجانا, قراءة كتب اون لاين, روايات عربية, كتب أدبية, تحميل روايات, مكتبة إلكترونية, كتب تنمية بشرية, كتب علمية, كتب تاريخ, كتب فلسفة, كتب دينية, كتب أطفال, كتبي, kotobi" />
+    <meta name="author" content="منصة كتبي - kotobi.xyz" />
+    <meta name="publisher" content="منصة كتبي" />
+    <meta name="copyright" content="منصة كتبي" />
+    <meta name="language" content="Arabic" />
+    <meta name="revisit-after" content="1 days" />
+    <meta name="distribution" content="global" />
+    <meta name="rating" content="general" />
+
+    <!-- Robots & Indexing -->
+    <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
+    <meta name="googlebot" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
+    <meta name="bingbot" content="index, follow" />
+
+    <!-- Language -->
+    <link rel="alternate" hreflang="ar" href="https://kotobi.xyz/" />
+    <link rel="alternate" hreflang="x-default" href="https://kotobi.xyz/" />
+    <!-- Canonical is set dynamically per page by React SEOHead component -->
+
+    <!-- Open Graph -->
+    
+    
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://kotobi.xyz/" />
+    <meta property="og:image" content="https://kotobi.xyz/lovable-uploads/b1cd70fc-5c3b-47ac-ba45-cc3236f7c840.png">
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="منصة كتبي - المكتبة الرقمية العربية المجانية" />
+    <meta property="og:site_name" content="منصة كتبي" />
+    <meta property="og:locale" content="ar_AR" />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:site" content="@kotobi_app" />
+    <meta name="twitter:creator" content="@kotobi_app" />
+    
+    
+    <meta name="twitter:image" content="https://kotobi.xyz/lovable-uploads/b1cd70fc-5c3b-47ac-ba45-cc3236f7c840.png">
+    <meta name="twitter:image:alt" content="منصة كتبي - المكتبة الرقمية العربية المجانية" />
+
+    <!-- JSON-LD: WebSite with SearchAction (Google Sitelinks Search Box) -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "name": "منصة كتبي",
+      "alternateName": ["كتبي", "Kotobi", "kotobi.xyz"],
+      "url": "https://kotobi.xyz",
+      "description": "أكبر مكتبة رقمية عربية مجانية - اقرأ وحمّل آلاف الكتب والروايات PDF مجاناً",
+      "inLanguage": "ar",
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": {
+          "@type": "EntryPoint",
+          "urlTemplate": "https://kotobi.xyz/search?query={search_term_string}"
+        },
+        "query-input": "required name=search_term_string"
+      }
+    }
+    </script>
+
+    <!-- JSON-LD: Organization -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "name": "منصة كتبي",
+      "alternateName": "Kotobi",
+      "url": "https://kotobi.xyz",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://kotobi.xyz/lovable-uploads/b1cd70fc-5c3b-47ac-ba45-cc3236f7c840.png",
+        "width": 512,
+        "height": 512
+      },
+      "description": "أكبر مكتبة رقمية عربية مجانية لقراءة وتحميل الكتب",
+      "foundingDate": "2024",
+      "sameAs": [
+        "https://facebook.com/kotobi.app",
+        "https://twitter.com/kotobi_app",
+        "https://instagram.com/kotobi.app"
+      ],
+      "contactPoint": {
+        "@type": "ContactPoint",
+        "contactType": "customer service",
+        "url": "https://kotobi.xyz/contact-us",
+        "availableLanguage": ["Arabic", "English"]
+      }
+    }
+    </script>
+
+    <!-- JSON-LD: BreadcrumbList for Homepage -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": [{
+        "@type": "ListItem",
+        "position": 1,
+        "name": "الرئيسية",
+        "item": "https://kotobi.xyz/"
+      }]
+    }
+    </script>
+
+    <!-- JSON-LD: Library (CollectionPage) -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "CollectionPage",
+      "name": "منصة كتبي - المكتبة الرقمية العربية المجانية",
+      "description": "اكتشف آلاف الكتب العربية المجانية في جميع المجالات",
+      "url": "https://kotobi.xyz",
+      "inLanguage": "ar",
+      "isPartOf": {
+        "@type": "WebSite",
+        "name": "منصة كتبي",
+        "url": "https://kotobi.xyz"
+      },
+      "about": {
+        "@type": "Thing",
+        "name": "كتب عربية مجانية"
+      },
+      "audience": {
+        "@type": "Audience",
+        "audienceType": "القراء العرب"
+      }
+    }
+    </script>
+
+    <!-- Critical inline styles + font fallback -->
+    <style>
+      html { background-color: hsl(220 20% 97%); color: hsl(220 15% 20%); }
+      html.dark { background-color: hsl(220 15% 10%); color: hsl(220 10% 90%); }
+      .animate-spin { animation: spin 1s linear infinite !important; }
+      @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+      @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.5; } }
+      /* Font fallback to eliminate FOIT */
+      body { font-family: 'Thmanyah Sans', Cairo, -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif; }
+    </style>
+    
+  
+  
+  
+  
+  
+  
+  
+
+  <!-- Ahrefs Analytics -->
+  <script src="https://analytics.ahrefs.com/analytics.js" data-key="R60qV31UrvrL5ZJgH67aSw" async></script>
+  <meta property="og:title" content="منصة كتبي | مكتبة رقمية عربية مجانية - اقرأ وحمّل آلاف الكتب والروايات PDF">
+  <meta name="twitter:title" content="منصة كتبي | مكتبة رقمية عربية مجانية - اقرأ وحمّل آلاف الكتب والروايات PDF">
+  <meta property="og:description" content="منصة كتبي أكبر مكتبة رقمية عربية مجانية. اقرأ وحمّل أكثر من 10,000 كتاب ورواية PDF مجاناً في الأدب والعلوم والتنمية الذاتية والتاريخ والفلسفة. انضم لمجتمع القراء العرب الآن.">
+  <meta name="twitter:description" content="منصة كتبي أكبر مكتبة رقمية عربية مجانية. اقرأ وحمّل أكثر من 10,000 كتاب ورواية PDF مجاناً في الأدب والعلوم والتنمية الذاتية والتاريخ والفلسفة. انضم لمجتمع القراء العرب الآن.">
+</head>
+  <body class="min-h-screen bg-background text-foreground antialiased">
+    <div id="root">
+      <!-- Inline skeleton for instant FCP - replaced by React on hydration -->
+      <div style="min-height:100vh">
+        <div style="height:56px;background:hsl(220 25% 99%);border-bottom:1px solid hsl(220 18% 90%);display:flex;align-items:center;justify-content:center">
+          <div style="width:100px;height:28px;background:hsl(220 16% 95%);border-radius:6px"></div>
+        </div>
+        <div style="padding:24px 16px;max-width:1200px;margin:0 auto">
+          <div style="height:200px;border-radius:12px;background:linear-gradient(160deg,#0d0221,#150734,#0a1628);margin-bottom:24px"></div>
+          <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:16px">
+            <div style="height:240px;background:hsl(220 16% 95%);border-radius:8px;animation:pulse 1.5s infinite"></div>
+            <div style="height:240px;background:hsl(220 16% 95%);border-radius:8px;animation:pulse 1.5s infinite"></div>
+            <div style="height:240px;background:hsl(220 16% 95%);border-radius:8px;animation:pulse 1.5s infinite"></div>
+            <div style="height:240px;background:hsl(220 16% 95%);border-radius:8px;animation:pulse 1.5s infinite"></div>
+            <div style="height:240px;background:hsl(220 16% 95%);border-radius:8px;animation:pulse 1.5s infinite"></div>
+            <div style="height:240px;background:hsl(220 16% 95%);border-radius:8px;animation:pulse 1.5s infinite"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script type="module" src="/src/main.tsx"></script>
+
+    <!-- Deferred third-party scripts - load after 5s to reduce TBT -->
+    <script>
+      window.addEventListener('load', function() {
+        setTimeout(function() {
+          // GTM
+          (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','GTM-K8LR83BL');
+          
+          // gtag
+          var gs = document.createElement('script');
+          gs.async = true;
+          gs.src = 'https://www.googletagmanager.com/gtag/js?id=G-N2ZMYTPYV9';
+          document.head.appendChild(gs);
+          gs.onload = function() {
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-N2ZMYTPYV9');
+          };
+        }, 5000);
+        // AdSense - load after 8s
+        setTimeout(function() {
+          var ad = document.createElement('script');
+          ad.async = true;
+          ad.src = 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6142276658151386';
+          ad.crossOrigin = 'anonymous';
+          document.head.appendChild(ad);
+        }, 8000);
+      });
+    </script>
+
+    <!-- GTM noscript fallback -->
+    <noscript>
+      <iframe src="https://www.googletagmanager.com/ns.html?id=GTM-K8LR83BL" height="0" width="0" style="display:none;visibility:hidden"></iframe>
+    </noscript>
+  </body>
+</html>
